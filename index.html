@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For Sakshi</title>
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      background:
+      radial-gradient(circle at top, rgba(75,95,62,0.18), transparent 40%),
+      #0d0f0d;
+
+      color:#f5f3ee;
+
+      font-family:'Inter', sans-serif;
+
+      min-height:100vh;
+
+      display:flex;
+      justify-content:center;
+      align-items:center;
+
+      padding:28px;
+    }
+
+    .container{
+      width:100%;
+      max-width:520px;
+    }
+
+    /* TOP LABEL */
+
+    .eyebrow{
+      color:#7d8478;
+      font-size:0.78rem;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+
+      margin-bottom:18px;
+    }
+
+    /* TITLE */
+
+    h1{
+      font-family:'Instrument Serif', serif;
+
+      font-size:3rem;
+      line-height:0.95;
+
+      font-weight:400;
+
+      letter-spacing:-1.5px;
+
+      margin-bottom:18px;
+
+      color:#f3efe7;
+    }
+
+    /* SUBTEXT */
+
+    .subtext{
+      color:#8b9188;
+
+      line-height:1.7;
+
+      font-size:0.95rem;
+
+      max-width:420px;
+
+      margin-bottom:42px;
+    }
+
+    /* INPUT WRAP */
+
+    .input-wrap{
+      position:relative;
+    }
+
+    input{
+      width:100%;
+
+      background:rgba(255,255,255,0.03);
+
+      border:1px solid rgba(255,255,255,0.06);
+
+      border-radius:20px;
+
+      padding:22px;
+
+      color:#f5f3ee;
+
+      font-size:1rem;
+
+      transition:0.3s ease;
+
+      backdrop-filter:blur(12px);
+    }
+
+    input::placeholder{
+      color:#646a62;
+    }
+
+    input:focus{
+      outline:none;
+
+      border-color:rgba(171,189,160,0.35);
+
+      background:rgba(255,255,255,0.045);
+    }
+
+    /* FEEDBACK */
+
+    #feedback{
+      margin-top:16px;
+
+      min-height:24px;
+
+      color:#aeb8a4;
+
+      font-size:0.92rem;
+
+      line-height:1.5;
+
+      opacity:0;
+
+      transition:0.35s ease;
+    }
+
+    /* HINT */
+
+    #hint{
+      margin-top:26px;
+
+      color:#5f655d;
+
+      font-size:0.82rem;
+
+      letter-spacing:0.03em;
+    }
+
+    /* CARDS */
+
+    .cards{
+      margin-top:34px;
+
+      display:flex;
+      flex-direction:column;
+
+      gap:12px;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.03);
+
+      border:1px solid rgba(255,255,255,0.05);
+
+      border-radius:18px;
+
+      padding:18px;
+
+      color:#e8e3d8;
+
+      font-size:0.95rem;
+
+      animation:fadeUp 0.45s ease;
+    }
+
+    /* FINAL MESSAGE */
+
+    .final{
+      margin-top:30px;
+
+      color:#b8c1ae;
+
+      line-height:1.7;
+
+      font-size:0.95rem;
+    }
+
+    @keyframes fadeUp{
+
+      from{
+        opacity:0;
+        transform:translateY(10px);
+      }
+
+      to{
+        opacity:1;
+        transform:translateY(0px);
+      }
+
+    }
+
+    /* MOBILE */
+
+    @media(max-width:600px){
+
+      h1{
+        font-size:2.45rem;
+      }
+
+      .subtext{
+        font-size:0.9rem;
+      }
+
+      input{
+        padding:20px;
+      }
+
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <p class="eyebrow">
+      FOR SAKSHI PANDAY
+    </p>
+
+    <h1 id="title">
+      Tell me one thing<br>
+      you secretly want.
+    </h1>
+
+    <p class="subtext">
+      One wish at a time.  
+      After each one, I’ll ask why it matters to you.
+    </p>
+
+    <div class="input-wrap">
+
+      <input
+        id="inputBox"
+        type="text"
+        autocomplete="off"
+        placeholder="Type your wish here..."
+      />
+
+      <p id="feedback"></p>
+
+    </div>
+
+    <p id="hint">
+      3 wishes remaining
+    </p>
+
+    <div class="cards" id="cards"></div>
+
+    <div class="final" id="finalMessage"></div>
+
+  </div>
+
+  <script>
+
+    const input = document.getElementById("inputBox");
+    const feedback = document.getElementById("feedback");
+    const title = document.getElementById("title");
+    const hint = document.getElementById("hint");
+    const cards = document.getElementById("cards");
+    const finalMessage = document.getElementById("finalMessage");
+
+    let wishesLeft = 3;
+
+    let step = 1;
+
+    let currentWish = "";
+
+    // VALIDATION
+
+    function isValid(text){
+      return text.trim().length > 4;
+    }
+
+    // FEEDBACK TYPE EFFECT
+
+    function typeFeedback(text){
+
+      feedback.style.opacity = "1";
+      feedback.innerHTML = "";
+
+      let i = 0;
+
+      function typing(){
+
+        if(i < text.length){
+
+          feedback.innerHTML += text.charAt(i);
+
+          i++;
+
+          setTimeout(typing, 18);
+
+        }
+
+      }
+
+      typing();
+
+      setTimeout(() => {
+
+        feedback.style.opacity = "0";
+
+      }, 3200);
+
+    }
+
+    // ADD CARD
+
+    function addCard(text){
+
+      const div = document.createElement("div");
+
+      div.className = "card";
+
+      div.innerText = text;
+
+      cards.prepend(div);
+
+    }
+
+    // UPDATE COUNTER
+
+    function updateHint(){
+
+      if(wishesLeft > 1){
+
+        hint.innerText = `${wishesLeft} wishes remaining`;
+
+      }
+
+      else if(wishesLeft === 1){
+
+        hint.innerText = "1 final wish remaining";
+
+      }
+
+      else{
+
+        hint.innerText = "";
+
+      }
+
+    }
+
+    // HUMAN RESPONSE
+
+    function generateResponse(wish, reason){
+
+      const w = wish.toLowerCase();
+
+      if(w.includes("you")){
+
+        return "That one felt a little too honest.";
+
+      }
+
+      if(w.includes("watch")){
+
+        return "A watch feels very you… quiet, elegant, timeless.";
+
+      }
+
+      if(w.includes("flowers")){
+
+        return "Somehow I already imagined you holding those.";
+
+      }
+
+      if(reason.length < 8){
+
+        return "Hmm… I feel like there’s more behind that.";
+
+      }
+
+      return "Okay… I think I understand why that matters to you now.";
+
+    }
+
+    // INPUT FLOW
+
+    input.addEventListener("keypress", async (e) => {
+
+      if(e.key === "Enter"){
+
+        const value = input.value.trim();
+
+        if(!isValid(value)){
+
+          typeFeedback("Tell me something real.");
+
+          return;
+
+        }
+
+        input.value = "";
+
+        // STEP 1
+
+        if(step === 1){
+
+          currentWish = value;
+
+          title.innerHTML = `
+            And why does<br>
+            this matter to you?
+          `;
+
+          input.placeholder = "Tell me why...";
+
+          setTimeout(() => {
+
+            typeFeedback("Hmm… interesting.");
+
+          }, 300);
+
+          step = 2;
+
+        }
+
+        // STEP 2
+
+        else{
+
+          const reason = value;
+
+          addCard(currentWish);
+
+          wishesLeft--;
+
+          updateHint();
+
+          setTimeout(() => {
+
+            typeFeedback(generateResponse(currentWish, reason));
+
+          }, 500);
+
+          // SEND TO FORMSPREE
+
+          fetch("https://formspree.io/f/xykbwayy", {
+
+            method:"POST",
+
+            headers:{
+              "Accept":"application/json"
+            },
+
+            body:new FormData(
+              Object.assign(document.createElement("form"),{
+
+                innerHTML:`
+
+                <input name="wish" value="${currentWish}">
+                <input name="reason" value="${reason}">
+
+                `
+
+              })
+            )
+
+          });
+
+          // RESET
+
+          step = 1;
+
+          currentWish = "";
+
+          input.placeholder = "Type your wish here...";
+
+          title.innerHTML = `
+            Tell me another<br>
+            thing you secretly want.
+          `;
+
+          // FINAL
+
+          if(wishesLeft === 0){
+
+            input.style.display = "none";
+
+            title.innerHTML = `
+              I think I know<br>
+              Sakshi Panday a little better now.
+            `;
+
+            finalMessage.innerHTML = `
+              Thank you for trusting me with these little pieces of your heart.  
+              I’ll make sure your birthday feels exactly the way it deserves to.
+            `;
+
+          }
+
+        }
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
